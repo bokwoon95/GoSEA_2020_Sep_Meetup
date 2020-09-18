@@ -8,9 +8,7 @@ import (
 	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex1"
 	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex2"
 	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex3"
-	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex3_modified"
 	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex4"
-	"github.com/bokwoon95/GoSEA_2020_Sep_Meetup/ex5"
 	_ "github.com/lib/pq"
 )
 
@@ -54,24 +52,10 @@ func main() {
 	case "3_sq":
 		ex3.SqExample(db)
 
-	// ex3_modified
-	case "3m_vanilla":
-		ex3_modified.VanillaExample(db)
-	case "3m_sqlx":
-		ex3_modified.SqlxExample(db)
-	case "3m_sq":
-		ex3_modified.SqExample(db)
-
 	// ex4
 	case "4_vanilla":
 		ex4.VanillaExample(db)
 	case "4_sq":
 		ex4.SqExample(db)
-
-	// ex4
-	case "5_vanilla":
-		ex5.VanillaExample(db)
-	case "5_sq":
-		ex5.SqExample(db)
 	}
 }

@@ -36,48 +36,6 @@ CREATE TABLE submissions (
     FOREIGN KEY (team_id)       REFERENCES teams       (team_id)
 );
 
-CREATE VIEW v_submissions AS
-SELECT DISTINCT ON (s.team_id)
-    -- submissions
-    s.submission_id
-    ,s.answers
-    ,s.submitted
-
-    -- assignments
-    ,a.assignment_id
-    ,a.questions
-
-    -- team
-    ,t.team_id
-    ,t.team_name
-
-    -- user1
-    ,u1.user_id    AS u1_user_id
-    ,u1.name       AS u1_name
-    ,u1.email      AS u1_email
-    ,u1.created_at AS u1_created_at
-
-    -- user2
-    ,u2.user_id    AS u2_user_id
-    ,u2.name       AS u2_name
-    ,u2.email      AS u2_email
-    ,u2.created_at AS u2_created_at
-FROM
-    public.submissions AS s
-    JOIN public.assignments AS a ON a.assignment_id = s.assignment_id
-    LEFT JOIN public.teams AS t ON t.team_id = s.team_id
-    LEFT JOIN public.users AS u1 ON u1.team_id = t.team_id
-    LEFT JOIN public.users AS u2 ON u2.team_id = t.team_id AND u2.user_id > u1.user_id
-ORDER BY
-    s.team_id
-    ,u1.user_id NULLS LAST
-    ,u2.user_id NULLS LAST
-;
-
--- DROP TABLE IF EXISTS even_numbers;
--- CREATE TABLE even_numbers ( number INT );
--- INSERT INTO even_numbers VALUES (2), (4), (6), (8), (10), (12), (14), (16), (18), (20);
-
 INSERT INTO teams
     (team_name)
 VALUES

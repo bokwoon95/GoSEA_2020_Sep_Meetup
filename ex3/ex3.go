@@ -10,6 +10,7 @@ import (
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 )
 
+
 type User struct {
 	UserID    int
 	Name      string
@@ -75,13 +76,6 @@ func (subm *Submission) RowMapper(
 		subm.Team.RowMapper(t, u1, u2)(row)
 		subm.Submitted = row.Bool(s.SUBMITTED)
 	}
-}
-
-type SqlxUser struct {
-	UserID    int       `db:"user_id"`
-	Name      string    `db:"name"`
-	Email     string    `db:"email"`
-	CreatedAt time.Time `db:"created_at"`
 }
 
 func prettyprint(v interface{}) {
