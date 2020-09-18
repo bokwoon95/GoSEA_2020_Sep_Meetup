@@ -1,0 +1,16 @@
+version: '3.2'
+services:
+  database_dev:
+    container_name: "${DATABASE_NAME}"
+    image: 'postgres'
+    ports:
+      - "${DATABASE_PORT}:5432"
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+      - './:/GoSEA_2020_Sep_Meetup/'
+    environment:
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_PASSWORD: "${DATABASE_PASSWORD}"
+      POSTGRES_DB: "${DATABASE_NAME}"
+volumes:
+  pgdata:

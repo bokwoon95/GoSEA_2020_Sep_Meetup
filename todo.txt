@@ -1,0 +1,7 @@
+add a view to show that it is possible
+
+make sure to delete the tables directory before the demonstration to show how code generation works
+remember to add team_id to during the ex2 example
+make sure to reuse ex2's RowValue example to illustrate dynamic clauses
+make sure to add sq.RowValue{"Kylo Churchill", "kylo_churchill@email.com"} to 3_sq example 3
+    actually save it for dynamic query building instead
