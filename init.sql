@@ -1,4 +1,3 @@
-DROP VIEW IF EXISTS v_submissions CASCADE;
 DROP TABLE IF EXISTS submissions CASCADE;
 DROP TABLE IF EXISTS assignments CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
@@ -16,6 +15,7 @@ CREATE TABLE users (
     team_id    INT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     deleted_at TIMESTAMPTZ,
+    -- profile_picture TEXT NOT NULL DEFAULT 'https://imgur.com/o3dd4rl',
 
     FOREIGN KEY (team_id) REFERENCES teams (team_id)
 );
@@ -33,7 +33,8 @@ CREATE TABLE submissions (
     submitted     BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id),
-    FOREIGN KEY (team_id)       REFERENCES teams       (team_id)
+    FOREIGN KEY (team_id)       REFERENCES teams       (team_id),
+    FOREIGN KEY (assignment_id) REFERENCES assignments (assignment_id)
 );
 
 INSERT INTO teams
@@ -150,6 +151,7 @@ VALUES
     -- ,(11, 'Rhiann Hunter', 'rhiann_hunter@email.com')
     ,(12, 'Stefano Buck', 'stefano_buck@email.com')
     -- ,(12, 'Teddy Hayden', 'teddy_hayden@email.com')
+    ,(12, 'Teddy Hayden', 'teddy_hayden@email.com')
     ,(13, 'Gethin Howells', 'gethin_howells@email.com')
     -- ,(13, 'Lisa-Marie Mccormack', 'lisa-marie_mccormack@email.com')
     ,(14, 'Manal Hamilton', 'manal_hamilton@email.com')
@@ -180,6 +182,7 @@ VALUES
     -- ,(26, 'Sam Bevan', 'sam_bevan@email.com')
     ,(27, 'Bogdan Fields', 'bogdan_fields@email.com')
     -- ,(27, 'Danielle Gilmore', 'danielle_gilmore@email.com')
+    ,(27, 'Danielle Gilmore', 'danielle_gilmore@email.com')
     ,(28, 'Fearne Howarth', 'fearne_howarth@email.com')
     -- ,(28, 'Salman Feeney', 'salman_feeney@email.com')
     ,(29, 'Taylor Burn', 'taylor_burn@email.com')
@@ -652,4 +655,3 @@ VALUES
     ,(4, NULL, '[]', FALSE)
     ,(4, NULL, '[]', FALSE)
 ;
-

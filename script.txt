@@ -1,0 +1,78 @@
+Intro myself
+Problems with database/sql
+Type safety: existence check, and datatype check
+Demo:
+    explain the database schema
+    demonstrate generating the tables
+    show how users table columns map to the generated struct fields
+        Mention how tables and columns follow the ALL_CAPS style
+        "Because it makes tables and columns stand out in your code: if you see an ALL_CAPS variable, it's usually a column or table"
+        It makes the translation process is very simple. If you want to know what your SQL column name will look like in Go, just uppercase everything. If you want to know what your Go column name will look like in SQL, just lowercase everything.
+        So it lowers the cognitive barrier when translating names between Go and SQL
+1) Compile time errors
+    Show how vanilla sql fails every criteria
+    Show how sq passes every criteria
+    End by emphasizing you gain all these compile time checks if you use this library
+2) Boilerplate
+    Show how "Selection is Mapping" works wrt ex1/sq
+    Show ex2/vanilla's three queries
+        The query is not important, you just have to know they all pull a list of users (i.e. the columns selected are the same)
+        Add the profile_picture column in the users table, regenrate schema
+        Add new code in ex2/vanilla for ProfilePicture to show up
+        End by emphasizing how many locations I had to update
+            and the more queries I have the worse it gets
+    Show how ex2/sq extracts the selection into a rowmapper, and the same rowmapper is reused across all three queries
+        Show the logged queries before adding the line to the row mapper
+        Show the logged queries after adding the line to row mapper
+        End by emphasizing how if you make changes to the mapper function, the changes will be propagated to all queries that use that mapper function
+3) Nested structs
+    Show the database schema again, and the corresponding structs that map to each table
+    Immediately follow up by showing the nested struct diagram instead, to illustrate the nestedness of the structs
+        explicitly mention how there are up to two users in each team, because one or both of the users can be NULL
+    Cover BOTH the nested struct slide and the NULL handling slide
+    Show ex3/vanilla, and what the big ugly query basically does is join all the tables together
+        and that there's a self join because of the two users in each team
+        highlight the query is long
+        highlight the scanning code is long
+        highlight because the users can be NULL, and we are using primitive types (switch to the struct definition for that) we have to instantiate a ton of temporary null structs, scan the values into them and transfer the zero value over
+        End by emphasizing how introducing so many temporary local variables increases the likelihood that you will typo something, mix the order up and cause a runtime error
+    Show ex3/sq, start from the user struct, work up to the team struct, the assignment struct then the submission struct
+        When explining the user rowmapper, notice how there's no null handling variables around
+            that's because row.Int,row.String etc implicitly convert NULLs to zero values
+            which works because NULL means lack of a value, and what happens if you encounter a user whose name is an empty string? also means lack of a value right?
+            -but- if you want to check if the user's was null, such as by setting a valid flag on the user struct, you can check for it separately using the row.IntValid method on the user_id column.
+        When explaining the team rowmapper, explicitly mention how you are reusing the rowmapper you defined on the user struct
+        When introducing ScanInto in the assignment rowmapper don't take too long, just explain the column is JSON type and there's no special row.JSON method so you have to fallback on the generic ScanInto method
+        After introducing the Submission rowmapper,
+        End by emphasizing how the rowmappers take care of which columns to SELECT and what variables to map them to
+        (flip to ex3/sq buffer) so that the main query only has to concern itself with joining the necessary tables and filtering the results
+        Look, the code written is three times smaller (highlight the number of lines per function)
+4) Dynamically build queries
+    Cut to the chase and just say 'we want to write a bulk insert query (show the example), but the number of records is determined at runtime'
+    Switch to ex4/vanilla and show the names and emails slices to simulate a variable number of users
+        'We want to insert the user data from these two slices into the users table'
+        INSERT INTO ... ON CONFLICT DO NOTHING, and the middle is variable because we don't know how many users there are.
+        So we must build the query at runtime using this loop
+        And beacsue we are using postgres, we need to use numbered placeholders. This fancy math here is just to ensure that when i is 0, the placeholders are 1 and 2, when i is 1, the placeholders are 3 and 4, so on and so forth
+        Run the example, show the query
+    Switch to ex4/sq and explain that no string building is necessary
+        Just write the query in the most straightforward way possible
+        'Insert Into, Columns, On Conflict Do Nothing'
+        'We can write On Conflict Do Nothing before we even add the values because sq is structured, so it knows to put the On Conflict Do Nothing clause at the end of the query'
+        The in the loop we just have to iterate through the slices and set the name and email values accordingly
+        Then we can directly execute the InsertQuery
+        But because we stil want to print out the query for you to see, we can separately call 'ToSQL' on the InsertQuery which wil yield the query and args for the query
+        This query and args is the exact same query and args that you can pass to (flip to ex4/vanilla buffer) db.Exec
+        So we get the query and args, and we print it out
+    Don't clear the zsh history, show that the output of 4_sq matches that of 4_vanilla
+Next is the SQL features slide
+    'Here are all the SQL features supported that I don't have time to cover, you can just check out these two links to read more about it'
+To end off, why should you use sq?
+    Because it gives you compile time guarantees about your queries: that your columns exist, that you used the right data types et cetera
+    Because it eliminates the most common SQL boilerplate with "Selection is Mapping": when you SELECT a column you can immediately assign it to a variable. So you just have to build up your query up your query and executed it, and you're done. You don't have to do any more mapping because you already mapped it in the Selection phase.
+    Because mapper functions can be nested in mapper functions, it gives you a very easy way to scan results into a deeply nested struct.
+    Mapping results into deeply nested structs is also no problem. Because every struct has its own mapper function, if you want to map data into a nested struct all you have to do is call the nested struct's mapper function.
+    And better NULL handling because the row helper methods implicitly translate NULLs to zero values so you can stick with primitive types, but you still have the option to check if a column result was NULL.
+    And lastly sq is a query builder, it's only natural that it can programatically build queries.
+    Bonus is that sq is designed for incremental adoption. You can selectivly upgrade individual queries in your codebase to use sq if you feel like you need the extra type safety, or if you just want to eliminate the boilerplate.
+Thank you for listening, that's all for my talk. Does anyone have any questions?

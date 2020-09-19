@@ -10,7 +10,6 @@ import (
 	sq "github.com/bokwoon95/go-structured-query/postgres"
 )
 
-
 type User struct {
 	UserID    int
 	Name      string
