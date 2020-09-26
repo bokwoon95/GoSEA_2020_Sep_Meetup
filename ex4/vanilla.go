@@ -21,19 +21,19 @@ func VanillaExample(db *sql.DB) {
 
 	// name
 	if searchNameString != "" {
-		predicates = append(predicates, fmt.Sprintf("u.name ILIKE ?"))
+		predicates = append(predicates, "u.name ILIKE ?")
 		args = append(args, searchNameString)
 	}
 
 	// email
 	if searchEmailString != "" {
-		predicates = append(predicates, fmt.Sprintf("u.email ILIKE ?"))
+		predicates = append(predicates, "u.email ILIKE ?")
 		args = append(args, searchEmailString)
 	}
 
 	// created_at
 	if !timeStart.IsZero() && !timeEnd.IsZero() {
-		predicates = append(predicates, fmt.Sprintf("u.created_at BETWEEN ? AND ?"))
+		predicates = append(predicates, "u.created_at BETWEEN ? AND ?")
 		args = append(args, timeStart, timeEnd)
 	}
 
